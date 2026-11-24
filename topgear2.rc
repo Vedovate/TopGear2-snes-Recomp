@@ -1,0 +1,3 @@
+/* topgear2.rc — Windows resource file for Top Gear 2: Definitive Edition */
+/* Icon ID 1 is used by Windows as the main application icon */
+1 ICON "topgear2.ico"

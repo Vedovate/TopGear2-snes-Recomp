@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  workflow_dispatch:
+
+jobs:
+  dmca-audit:
+    name: Clean Repository Audit
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Verify no generated files, ROMs, or binaries are tracked
+        run: |
+          if git ls-files | grep -E '^(generated/|.*\.sfc$|.*\.smc$|.*\.fig$|.*\.swc$|.*\.rom$|.*\.dll$|.*\.exe$|.*\.so$|.*\.dylib$)'; then
+            echo "ERROR: Prohibited ROM, binary, or generated artifact is tracked in Git!"
+            exit 1
+          fi
+          echo "Audit passed: repository contains zero copyrighted ROMs, generated shards, or binaries."
+
+  build-linux:
+    name: Build & Test (Linux GCC / NO_LIFT=1)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout with submodules
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install build tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gcc make python3
+
+      - name: Build with NO_LIFT=1
+        run: make NO_LIFT=1 all test_regressions
+
+      - name: Run regression tests
+        run: ./test_regressions
+
+  build-windows:
+    name: Build & Test (Windows MinGW-w64 / NO_LIFT=1)
+    runs-on: windows-latest
+    defaults:
+      run:
+        shell: msys2 {0}
+    steps:
+      - name: Checkout with submodules
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup MSYS2 MinGW-w64
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: >-
+            mingw-w64-x86_64-gcc
+            mingw-w64-x86_64-make
+            mingw-w64-x86_64-python
+
+      - name: Build with NO_LIFT=1
+        run: mingw32-make NO_LIFT=1 all test_regressions.exe
+
+      - name: Run regression tests
+        run: ./test_regressions.exe

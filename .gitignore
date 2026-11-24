@@ -1,0 +1,44 @@
+# Copyrighted ROMs and cartridge dumps (never commit)
+*.sfc
+*.smc
+*.fig
+*.swc
+*.rom
+
+# Generated static recompilation output (must be lifted locally from your own ROM)
+generated/
+
+# Compiled objects, shared libraries, and executables
+*.o
+*.obj
+*.exe
+*.dll
+*.so
+*.dylib
+topgear2
+test_tg2_boot
+test_regressions
+test_definitive_edition
+test_race_and_money
+diag_frames
+
+# Runtime saves, config, telemetry, and test outputs
+*.ppm
+*.bmp
+tests/*.bin
+tests/*.json
+savegame.bin
+savegame.json
+quicksave.bin
+records.json
+tg2_config.json
+portable.txt
+
+# Local packaging, reference copies, and editor/system leftovers
+dist_topgear2/
+topgear2_windows.zip
+remake_reference/
+ref_repo/
+*.bak-*
+.DS_Store
+Thumbs.db
